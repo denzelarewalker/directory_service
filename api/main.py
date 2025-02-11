@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from . import test_data
 import uvicorn
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await create_tables()

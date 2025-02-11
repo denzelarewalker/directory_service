@@ -86,9 +86,7 @@ class OrganizationRepository:
                     selectinload(OrganizationORM.building),
                     selectinload(OrganizationORM.activities),
                 )
-                .where(
-                    func.lower(OrganizationORM.name) == func.lower(name)
-                )  # Нечувствительный к регистру поиск
+                .where(func.lower(OrganizationORM.name) == func.lower(name))
             )
             result = await session.execute(query)
             organization_model = result.scalars().first()
@@ -114,13 +112,10 @@ class OrganizationRepository:
         cls, latitude: float, longitude: float, radius: float
     ) -> list[Organization]:
         async with new_session() as session:
-            query = (
-                select(OrganizationORM)
-                .options(
-                    selectinload(OrganizationORM.phone_numbers),
-                    selectinload(OrganizationORM.building),
-                    selectinload(OrganizationORM.activities),
-                )
+            query = select(OrganizationORM).options(
+                selectinload(OrganizationORM.phone_numbers),
+                selectinload(OrganizationORM.building),
+                selectinload(OrganizationORM.activities),
             )
             result = await session.execute(query)
 
@@ -146,7 +141,6 @@ class OrganizationRepository:
     @classmethod
     async def find_by_activity(cls, activity_id: int) -> list[Organization]:
         async with new_session() as session:
-            # Получаем все организации, связанные с указанной деятельностью
             query = (
                 select(OrganizationORM)
                 .options(selectinload(OrganizationORM.activities))
@@ -171,7 +165,6 @@ class ActivityRepository:
     @classmethod
     async def get_activity_tree(cls, activity_id: int) -> list[Activity]:
         async with new_session() as session:
-            # Загружаем активность вместе с дочерними элементами рекурсивно
             query = (
                 select(ActivityORM)
                 .options(selectinload(ActivityORM.children))
@@ -179,19 +172,19 @@ class ActivityRepository:
             )
             result = await session.execute(query)
             activity = result.scalars().first()
-            
+
             if not activity:
                 raise HTTPException(status_code=404, detail="Activity not found")
-            
-            # Рекурсивно собираем все дочерние активности
-            all_activities = [activity] + await cls._get_all_children(session, activity) 
+
+            all_activities = [activity] + await cls._get_all_children(session, activity)
             return [Activity.from_orm(a) for a in all_activities]
 
     @classmethod
-    async def _get_all_children(cls, session: AsyncSession, activity: ActivityORM) -> list[ActivityORM]:
+    async def _get_all_children(
+        cls, session: AsyncSession, activity: ActivityORM
+    ) -> list[ActivityORM]:
         children = activity.children.copy()
         for child in activity.children:
-            # Явно загружаем дочерние элементы каждого ребенка
             await session.refresh(child, attribute_names=["children"])
             children += await cls._get_all_children(session, child)
         return children

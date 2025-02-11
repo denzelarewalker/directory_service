@@ -45,8 +45,6 @@ async def search_organizations_by_activity(activity_id: int) -> list[Organizatio
     return organizations
 
 
-
 @router.get("/nearby", response_model=list[Organization])
 async def get_organizations_nearby(lat: float, lon: float, radius: float):
     return await OrganizationRepository.find_nearby(lat, lon, radius)
-

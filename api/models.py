@@ -3,7 +3,6 @@ from sqlalchemy.orm import relationship, Mapped, mapped_column
 from .database import Base
 
 
-# Таблица для связи многие-ко-многим между Организациями и Деятельностями
 organization_activity = Table(
     "organization_activity",
     Base.metadata,
@@ -62,4 +61,3 @@ class ActivityORM(Base):
     organizations = relationship(
         "OrganizationORM", secondary=organization_activity, back_populates="activities"
     )
-
