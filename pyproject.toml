@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "api"
+version = "0.1.0"
+description = ""
+authors = ["Your <you@nail.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.115.8"
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.38"}
+asyncpg = "^0.30.0"
+alembic = "^1.14.1"
+uvicorn = "^0.34.0"
+
+[tool.poetry.scripts]
+app = "api.main:run"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
