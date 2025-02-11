@@ -1,11 +1,12 @@
 from logging.config import fileConfig
-
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-# from api.models import Base
 from alembic import context
-from api.database import DATABASE_URL, Base, async_engine
 import api.models as models
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -15,7 +16,7 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-config.set_main_option("sqlalchemy.url", DATABASE_URL + "?async_fallback=True")
+config.set_main_option("sqlalchemy.url", os.environ["POSTGRES_URL"] + "?async_fallback=True")
 
 
 # add your model's MetaData object here

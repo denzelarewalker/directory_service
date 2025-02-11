@@ -4,12 +4,13 @@ from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
 )
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 
-DATABASE_URL = "postgresql+asyncpg://user:password@db/postgres"
-
-
-async_engine = create_async_engine(DATABASE_URL, echo=True, future=True)
+async_engine = create_async_engine(os.environ["POSTGRES_URL"], echo=True, future=True)
 
 
 new_session = async_sessionmaker(
@@ -20,6 +21,7 @@ new_session = async_sessionmaker(
 class Base(DeclarativeBase):
     pass
 
+
 async def create_tables():
-    async with async_engine.begin() as conn:  # Используем async_engine для создания таблиц
-        await conn.run_sync(Base.metadata.create_all)  # Создаем все таблицы
+    async with async_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)

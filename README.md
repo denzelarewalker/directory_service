@@ -7,8 +7,9 @@
    ```
    git clone https://github.com/denzelarewalker/directory_service
    ```
+2. Создайте в корневой директории файл .env по примеру .env.example заменив на свои значения
 
-2. Запустите `docker-compose` командой:
+3. Запустите `docker-compose` командой:
    ```
    docker-compose up -d
    ```
